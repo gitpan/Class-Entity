@@ -1,13 +1,15 @@
 =head1 NAME
 
-Clas::Entity - Object interface for relational databases
+Class::Entity - Object interface for relational databases
 
 =head1 DESCRIPTION
 
-B<Class::Entity> allows a developer to create an object interface for
-a relational database backend by writing the smallest amount of
-code possible in a set of sub-classes which correspond to database
-tables.
+B<Class::Entity> allows a developer to create an object interface
+for a relational database backend by writing a minimal amount of
+code in a set of sub-classes which correspond to database tables.
+
+Right now this module only implements a read only interface. Writes
+will probably come later.
 
 =head1 SYNOPSIS
 
@@ -33,15 +35,16 @@ tables.
 use strict;
 use warnings;
 
-our $VERSION = "0.1";
+our $VERSION = "0.2";
 
 package Class::Entity;
 our $AUTOLOAD;
 
-=item new()
+=item new(dbh => $dbh, data => $data)
 
-The constructor creates a new instance of the current class. If you pass
-in values via B<data> they will be stored in the object for later use.
+The constructor creates a new instance of the current class. If you
+pass in values via B<data> they will be stored in the object for
+later use.
 
 =cut
 
@@ -59,8 +62,8 @@ Return the primary key for the table the current sub-class of
 B<Class::Entity> represents. You will normally want to overide this
 in the sub-class but for convenience it returns B<id> by default.
 
-The value of this method is used to create the query that is run when
-a call to B<fetch> is made.
+The value of this method is used to create the query that is run
+when a call to B<fetch> is made.
 
 =cut
 
@@ -87,7 +90,8 @@ This method provides the sub-class author a means of joing accross
 multiple tables when a call to B<fetch> or B<find> is made. All
 database fields returned via these methods are stored in an instance
 of the current sub-class and exposed via the autoloader. By default
-it returns all fields in the current table represented by the sub-class.
+it returns all fields in the current table represented by the
+sub-class.
 
 =cut
 
@@ -98,10 +102,10 @@ sub _relation {
 
 =item _object_map()
 
-The Object Map works in conjuction with the autoloader. If you have
+The object map works in conjuction with the autoloader. If you have
 sub-classes of B<Class::Entity>, which represent tables linked to
 in the current sub-class, you can overload this method to return a
-hash where the keys are the table column and the values are the
+hash where the keys are the table columns and the values are the
 names of the associated B<Class::Entity> sub-classes.
 
 The object map will only be used for method calls of the form
@@ -132,10 +136,10 @@ sub _object_map { }
 
 =item fetch(dbh => $dbh, key => $key)
 
-Return an instance of the current sub-class. You must provide a database
-value via B<dbh> and a primary key value via B<key>. The database
-handle is stored in the returned object for later use and all table
-fields are exposed via the auoloader.
+Return an instance of the current sub-class. You must provide a
+database value via B<dbh> and a primary key value via B<key>. The
+database handle is stored in the returned object for later use and
+all table fields are exposed via the auoloader.
 
 =cut
 
@@ -195,6 +199,12 @@ access them like this:
   print $table->Date . "\n";
   print $table->Subject . "\n";
 
+If you call an anonymous method of the form B<get_Value>, where
+B<Value> is a column represented by the current object, the autoloader
+will attempt to dispatch the call to the fetch method of the
+corresponding sub-class of B<Class::Entity>, if it's listed in the
+B<_bject_map>.
+
 =cut
 
 sub AUTOLOAD {
@@ -226,13 +236,14 @@ DBI
 
 =head1 AUTHORS
 
-Paddy Nemwan, <paddy.newman@db.com>
+Paddy Newman, <pnewman@cpan.com>
 
 =head1 ACKNOWLEDGEMENTS
 
-This is basically a cut-down, slightly modified version of something an
-ex-colegue of mine wrote and introduced me to. His name is Dan Barlow
-and he's a much better programmer than me and he deserves all the credit.
+This is basically a cut-down, slightly modified version of something
+an ex-colegue of mine wrote and introduced me to. His name is Dan
+Barlow and he's a much better programmer than me and he deserves
+all the credit.
 
 =cut
 
