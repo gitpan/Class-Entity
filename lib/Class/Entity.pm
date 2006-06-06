@@ -4,9 +4,9 @@ Class::Entity - Object interface for relational databases
 
 =head1 DESCRIPTION
 
-B<Class::Entity> allows a developer to create an object interface
-for a relational database backend by writing a minimal amount of
-code in a set of sub-classes which correspond to database tables.
+B<Class::Entity> allows a developer to create an object interface for
+a relational database by writing a minimal amount of code in a set of
+sub-classes which correspond to database tables.
 
 Right now this module only implements a read only interface. Writes
 will probably come later.
@@ -35,7 +35,7 @@ will probably come later.
 use strict;
 use warnings;
 
-our $VERSION = "0.2";
+our $VERSION = "0.3";
 
 package Class::Entity;
 our $AUTOLOAD;
@@ -214,7 +214,7 @@ sub AUTOLOAD {
   if (my ($method) = $symbol =~ /get_(.*)/) {
     my %h = $self->_object_map;
     if (my $class = $h{$method}) {
-      return $class->fetch(dbh => $self->{_dbh}, value => $self->$method);
+      return $class->fetch(dbh => $self->{_dbh}, key => $self->$method);
     }
     warn sprintf qq(annonymous method "%s" cannot be mapped), $symbol;
     return undef;
