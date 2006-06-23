@@ -1,7 +1,7 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-  NAME    => "Class::Entity",
-  VERSION => "0.3"
+  NAME         => "Class::Entity",
+  VERSION_FROM => "lib/Class/Entity.pm"
 );
 

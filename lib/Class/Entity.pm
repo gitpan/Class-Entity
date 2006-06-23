@@ -19,10 +19,10 @@ will probably come later.
   package main;
   use DBI;
   my $dbh = DBI->connect(...);
-  my $table = Table->fetch(dbh => $dbh, value => 1234);
+  my $table = Table->fetch(dbh => $dbh, key => 1234);
   print $table->Column;
 
-  for (Table->find(dbh => $dbh, value => "Name like 'foo%'")) {
+  for (Table->find(dbh => $dbh, where => "Name like 'foo%'")) {
     printf "% %\n", $table->Name, $table->Date;
   }
 
@@ -35,7 +35,7 @@ will probably come later.
 use strict;
 use warnings;
 
-our $VERSION = "0.3";
+our $VERSION = "0.4";
 
 package Class::Entity;
 our $AUTOLOAD;
