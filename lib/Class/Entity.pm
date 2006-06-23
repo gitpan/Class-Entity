@@ -35,7 +35,7 @@ will probably come later.
 use strict;
 use warnings;
 
-our $VERSION = "0.4";
+our $VERSION = "0.5";
 
 package Class::Entity;
 our $AUTOLOAD;
@@ -80,7 +80,7 @@ that is: the sub-class name minus the leading /.*:/.
 
 sub _table {
   my $self = shift;
-  my ($table) = (ref($self)||$self) =~ /:([^:]+)$/;
+  my ($table) = (ref($self)||$self) =~ /:?([^:]+)$/;
   $table;
 }
 
@@ -147,10 +147,10 @@ sub fetch {
   my ($class, %args) = @_;
   my $dbh = $args{dbh} || die "no database handle";
   my $key = $args{key} || die "no key argument";
-  my $query = sprintf "select %s where %s = ?",
+  my $query = sprintf "select %s where %s = $key",
     $class->_relation, $class->_primary_key;
   my $sth = $dbh->prepare($query) or return undef;
-  $sth->execute($key) or return undef;
+  $sth->execute or return undef;
   $class->new(dbh => $dbh, data => $sth->fetchrow_hashref);
 }
 
